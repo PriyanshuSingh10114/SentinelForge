@@ -1,9 +1,12 @@
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, JSON, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.session import Base
+
+if TYPE_CHECKING:
+    from app.models.event import SecurityEvent
 
 
 def get_utc_now() -> datetime:

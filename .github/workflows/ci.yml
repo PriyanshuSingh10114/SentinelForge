@@ -31,12 +31,13 @@ jobs:
       - name: Run Flake8 Code Quality
         working-directory: ./backend
         run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          flake8 app tests --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 app tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
       - name: Execute Full Pytest Suite & OWASP Verification
         working-directory: ./backend
         env:
+          PYTHONPATH: .
           DATABASE_URL: sqlite+aiosqlite:///./test_ci.db
           JWT_SECRET_KEY: ci_test_secret_key_not_for_prod_12345
           OPENAI_API_KEY: fake-ci-key-deterministic-fallback
