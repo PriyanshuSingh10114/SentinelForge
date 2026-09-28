@@ -17,6 +17,8 @@ from app.api.v1.events import router as events_router
 from app.api.v1.dlp import router as dlp_router
 from app.api.v1.incidents import router as incidents_router
 from app.api.v1.threats import router as threats_router
+from app.api.v1.investigations import router as investigations_router
+from app.api.v1.remediations import router as remediations_router
 
 # Initialize logging
 setup_logging(settings.LOG_LEVEL)
@@ -41,6 +43,8 @@ app.include_router(events_router, prefix="/api/v1")
 app.include_router(dlp_router, prefix="/api/v1")
 app.include_router(incidents_router, prefix="/api/v1")
 app.include_router(threats_router, prefix="/api/v1")
+app.include_router(investigations_router, prefix="/api/v1")
+app.include_router(remediations_router, prefix="/api/v1")
 
 # CORS Middleware
 app.add_middleware(
