@@ -62,9 +62,7 @@
         <b>Affiliations & Companies:</b><br/>
         <img src="https://img.shields.io/badge/TM_Cloud_Solutions-Cloud_&_DevSecOps-0284C7?style=flat-square&logo=googlecloud&logoColor=white" alt="TM Cloud Solutions"/>
         <img src="https://img.shields.io/badge/QuickIntell-AI_Intelligence_Platforms-6366F1?style=flat-square&logo=openai&logoColor=white" alt="QuickIntell"/>
-        <img src="https://img.shields.io/badge/SentinelForge-Cyber_Defense_Labs-4F46E5?style=flat-square&logo=shield" alt="SentinelForge"/>
-      </p>
-    </td>
+        <img src="https://img.shields.io/badge/DevSecOps_Engineering-Production_Systems-0EA5E9?style=flat-square&logo=git" alt="DevSecOps"/>
   </tr>
 </table>
 
