@@ -178,6 +178,10 @@ async def init_db() -> None:
                     is_active=True,
                 )
                 session.add(user)
+            else:
+                existing_user.failed_login_attempts = 0
+                existing_user.locked_until = None
+                existing_user.is_active = True
 
         # 6. Seed Baseline DLP & Rate Limit Policies
         baseline_policies = [

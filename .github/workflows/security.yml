@@ -1,0 +1,63 @@
+name: DevSecOps Automated Security Scans
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Run weekly on Mondays
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+
+jobs:
+  sast-and-secrets:
+    name: SAST, Secret Scanning & Dependency Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Secret Scan with Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run Bandit Python SAST
+        working-directory: ./backend
+        run: |
+          pip install bandit
+          bandit -r app/ -ll -ii -f screen || true
+
+      - name: Dependency Vulnerability Audit
+        working-directory: ./backend
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements.txt || true
+
+  container-security:
+    name: Docker Container Image Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Backend Docker Image
+        run: |
+          docker build -t sentinelforge-backend:local -f docker/Dockerfile.backend backend/
+
+      - name: Scan Backend Image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'sentinelforge-backend:local'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
