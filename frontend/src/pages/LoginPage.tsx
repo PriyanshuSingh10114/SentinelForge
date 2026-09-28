@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Lock, Mail, AlertCircle, ArrowRight, UserCheck } from 'lucide-react';
+import { Lock, Mail, AlertCircle, ArrowRight, UserCheck } from 'lucide-react';
+import { SentinelLogo } from '../components/ui/SentinelLogo';
 
 const DEMO_PRESETS = [
   { role: 'Admin', email: 'admin@sentinelforge.local', pass: 'SentinelAdmin123!', desc: 'Full authority: Policies, users, HITL approvals' },
@@ -44,13 +45,15 @@ export const LoginPage: React.FC = () => {
 
       <div className="w-full max-w-md z-10">
         <div className="text-center mb-8">
-          <div className="inline-flex w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-600 items-center justify-center shadow-xl shadow-cyan-950/60 mb-3">
-            <Shield className="w-7 h-7 text-white" />
+          <div className="inline-flex items-center justify-center mb-4">
+            <SentinelLogo size={64} glow={true} />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-300 via-indigo-200 to-white bg-clip-text text-transparent">
             SENTINEL<span className="text-cyan-400">FORGE</span>
           </h1>
-          <p className="text-xs font-mono text-slate-400 mt-1">Enterprise Security Engineering Platform</p>
+          <p className="text-xs font-mono text-cyan-400/80 mt-1 uppercase tracking-widest">
+            AI-Powered Threat Defense & DevSecOps Platform
+          </p>
         </div>
 
         <div className="bg-sentinel-900/90 border border-sentinel-800 rounded-xl p-6 shadow-2xl backdrop-blur-md">

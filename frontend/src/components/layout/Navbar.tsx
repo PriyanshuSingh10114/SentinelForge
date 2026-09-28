@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Shield, ShieldAlert, LogOut, User, Activity } from 'lucide-react';
+import { ShieldAlert, LogOut, User, Activity } from 'lucide-react';
+import { SentinelLogo } from '../ui/SentinelLogo';
 
 export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -21,14 +22,12 @@ export const Navbar: React.FC = () => {
   return (
     <header className="h-14 border-b border-sentinel-800 bg-sentinel-950/90 backdrop-blur sticky top-0 z-30 flex items-center justify-between px-6">
       <div className="flex items-center space-x-3">
-        <div className="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-950/50">
-          <Shield className="w-5 h-5 text-white" />
-        </div>
+        <SentinelLogo size={34} />
         <div>
-          <span className="font-bold tracking-wider text-base bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+          <span className="font-extrabold tracking-wider text-base bg-gradient-to-r from-cyan-300 via-indigo-200 to-white bg-clip-text text-transparent">
             SENTINEL<span className="text-cyan-400">FORGE</span>
           </span>
-          <span className="text-[10px] font-mono tracking-widest text-slate-500 ml-2 border border-sentinel-800 rounded px-1.5 py-0.2">
+          <span className="text-[10px] font-mono tracking-widest text-cyan-400/90 ml-2 border border-cyan-800/60 rounded px-1.5 py-0.2 bg-cyan-950/40">
             SEC-OPS CONSOLE
           </span>
         </div>
