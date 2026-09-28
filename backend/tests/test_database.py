@@ -76,6 +76,9 @@ async def test_database_initialization_and_seeding():
 async def test_security_event_and_incident_relationship():
     from datetime import datetime, timezone
 
+    import uuid
+    inc_num = f"INC-TEST-{uuid.uuid4().hex[:6].upper()}"
+
     async with AsyncSessionLocal() as session:
         # Create an event
         event = SecurityEvent(
@@ -93,7 +96,7 @@ async def test_security_event_and_incident_relationship():
 
         # Create an incident linked to the event
         incident = Incident(
-            incident_number="INC-TEST-001",
+            incident_number=inc_num,
             title="Unit Test Correlation Incident",
             description="Testing foreign keys and many-to-many relationship",
             severity="HIGH",
@@ -106,7 +109,7 @@ async def test_security_event_and_incident_relationship():
         await session.commit()
 
         # Query incident and verify correlated events
-        stmt = select(Incident).where(Incident.incident_number == "INC-TEST-001")
+        stmt = select(Incident).where(Incident.incident_number == inc_num)
         res = await session.execute(stmt)
         saved_inc = res.scalar_one_or_none()
         assert saved_inc is not None

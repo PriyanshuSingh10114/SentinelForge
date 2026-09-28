@@ -11,6 +11,8 @@ from app.core.config import settings
 from app.core.errors import SentinelException, global_exception_handler, sentinel_exception_handler
 from app.core.logging import logger, setup_logging
 from app.database.session import AsyncSessionLocal
+from app.api.v1.auth import router as auth_router
+from app.api.v1.admin import router as admin_router
 
 # Initialize logging
 setup_logging(settings.LOG_LEVEL)
@@ -27,6 +29,10 @@ app = FastAPI(
 # Exception Handlers
 app.add_exception_handler(SentinelException, sentinel_exception_handler)
 app.add_exception_handler(Exception, global_exception_handler)
+
+# Mount API Routers
+app.include_router(auth_router, prefix="/api/v1")
+app.include_router(admin_router, prefix="/api/v1")
 
 # CORS Middleware
 app.add_middleware(
