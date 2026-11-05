@@ -23,7 +23,7 @@ export const Sidebar: React.FC = () => {
     { to: '/incidents', label: 'Incidents & Graph', icon: AlertTriangle },
     { to: '/events', label: 'Event Telemetry', icon: Radio },
     { to: '/dlp', label: 'DLP & Classification', icon: FileKey },
-    { to: '/threats', label: 'STRIDE Threat Model', icon: ShieldCheck },
+    { to: '/threat-modeling', label: 'STRIDE Threat Model', icon: ShieldCheck },
     { to: '/scans', label: 'AppSec Scans', icon: Binary },
   ];
 

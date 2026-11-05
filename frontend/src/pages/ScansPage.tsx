@@ -26,6 +26,18 @@ export const ScansPage: React.FC = () => {
     fetchFindings();
   }, []);
 
+  const handleStatusChange = async (findingId: string, newStatus: string) => {
+    try {
+      setError(null);
+      await api.scans.updateStatus(findingId, newStatus);
+      setFindings((prev) =>
+        prev.map((f) => (f.id === findingId ? { ...f, status: newStatus } : f))
+      );
+    } catch (e: any) {
+      setError(e.message || 'Failed updating scan finding status');
+    }
+  };
+
   const handleSimulateScan = async () => {
     setSimulating(true);
     try {
@@ -178,7 +190,7 @@ export const ScansPage: React.FC = () => {
                   <th className="pb-2">Severity</th>
                   <th className="pb-2">File Location</th>
                   <th className="pb-2">Vulnerability Description & Remediation</th>
-                  <th className="pb-2 text-right">Status</th>
+                  <th className="pb-2 text-right">Status / Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-mono">
@@ -210,15 +222,22 @@ export const ScansPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="py-3 text-right">
-                      <span
-                        className={
+                      <select
+                        value={f.status}
+                        onChange={(e) => handleStatusChange(f.id, e.target.value)}
+                        className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-md border focus:outline-none transition-all cursor-pointer shadow-sm ${
                           f.status === 'RESOLVED'
-                            ? 'badge-success'
-                            : 'badge-info'
-                        }
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                            : f.status === 'FALSE_POSITIVE'
+                            ? 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
+                            : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                        }`}
+                        title="Click to toggle status (OPEN, RESOLVED, FALSE_POSITIVE)"
                       >
-                        {f.status}
-                      </span>
+                        <option value="OPEN">● OPEN</option>
+                        <option value="RESOLVED">✓ RESOLVED</option>
+                        <option value="FALSE_POSITIVE">✕ FALSE POSITIVE</option>
+                      </select>
                     </td>
                   </tr>
                 ))}

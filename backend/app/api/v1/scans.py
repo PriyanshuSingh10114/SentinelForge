@@ -86,3 +86,31 @@ async def ingest_scan_finding(
     await db.commit()
     await db.refresh(finding)
     return finding
+
+
+class ScanFindingStatusUpdateRequest(BaseModel):
+    status: str = Field(..., description="OPEN, RESOLVED, FALSE_POSITIVE")
+
+
+@router.patch("/findings/{finding_id}/status", response_model=ScanFindingResponse)
+async def update_scan_finding_status(
+    finding_id: str,
+    payload: ScanFindingStatusUpdateRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_role("Admin", "Analyst", "Developer")),
+):
+    """
+    Update status of a security finding (e.g., mark as RESOLVED or FALSE_POSITIVE).
+    """
+    stmt = select(ScanFinding).where(ScanFinding.id == finding_id)
+    res = await db.execute(stmt)
+    finding = res.scalar_one_or_none()
+
+    if not finding:
+        raise HTTPException(status_code=404, detail=f"Finding with ID {finding_id} not found")
+
+    finding.status = payload.status.upper()
+    await db.commit()
+    await db.refresh(finding)
+    return finding
+

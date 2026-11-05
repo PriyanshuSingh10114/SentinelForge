@@ -53,6 +53,7 @@ export const App: React.FC = () => {
             <Route path="events" element={<EventsPage />} />
             <Route path="dlp" element={<DlpPage />} />
             <Route path="threat-modeling" element={<ThreatModelingPage />} />
+            <Route path="threats" element={<ThreatModelingPage />} />
             <Route path="scans" element={<ScansPage />} />
             <Route path="policies" element={<PoliciesPage />} />
             <Route path="users" element={<UsersPage />} />

@@ -109,6 +109,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+    updateStatus: (id: string, status: string) =>
+      request<any>(`/scans/findings/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      }),
   },
   dlp: {
     scan: (content: string, sourceType: string = 'PAYLOAD', sourceId?: string) =>
