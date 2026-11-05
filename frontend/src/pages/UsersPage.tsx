@@ -62,14 +62,14 @@ export const UsersPage: React.FC = () => {
     const r = (role || '').toUpperCase();
     switch (r) {
       case 'ADMIN':
-        return 'bg-purple-950 text-purple-300 border-purple-800';
+        return 'bg-purple-50 text-purple-700 border-purple-200';
       case 'ANALYST':
       case 'SECURITY_ANALYST':
-        return 'bg-cyan-950 text-cyan-300 border-cyan-800';
+        return 'bg-cyan-50 text-cyan-700 border-cyan-200';
       case 'DEVELOPER':
-        return 'bg-indigo-950 text-indigo-300 border-indigo-800';
+        return 'bg-indigo-50 text-indigo-700 border-indigo-200';
       default:
-        return 'bg-slate-800 text-slate-300 border-slate-700';
+        return 'bg-slate-100 text-slate-700 border-slate-200';
     }
   };
 
@@ -77,17 +77,17 @@ export const UsersPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-            <Users className="w-7 h-7 text-indigo-400" />
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Users className="w-7 h-7 text-indigo-600" />
             Users & IAM Roles
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Enterprise identity management, least-privilege RBAC role enforcement, and lockout status.
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
         >
           <UserPlus className="w-4 h-4" />
           Provision Identity
@@ -95,25 +95,25 @@ export const UsersPage: React.FC = () => {
       </div>
 
       {error && (
-        <div className="p-4 bg-red-950/40 border border-red-800 rounded-lg text-red-300 text-sm">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {error}
         </div>
       )}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-slate-950 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
+          <table className="w-full text-left text-sm text-slate-700">
+            <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="px-6 py-4">User</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4">Account Status</th>
-                <th className="px-6 py-4">Failed Logins</th>
-                <th className="px-6 py-4">Last Authentication</th>
-                <th className="px-6 py-4">Created</th>
+                <th className="px-6 py-4 font-semibold">User</th>
+                <th className="px-6 py-4 font-semibold">Role</th>
+                <th className="px-6 py-4 font-semibold">Account Status</th>
+                <th className="px-6 py-4 font-semibold">Failed Logins</th>
+                <th className="px-6 py-4 font-semibold">Last Authentication</th>
+                <th className="px-6 py-4 font-semibold">Created</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-slate-200">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
@@ -128,16 +128,16 @@ export const UsersPage: React.FC = () => {
                 </tr>
               ) : (
                 users.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-800/40 transition-colors">
+                  <tr key={u.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-semibold text-white">
+                        <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-semibold text-slate-700">
                           {u.name.substring(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-semibold text-white">{u.name}</div>
-                          <div className="text-xs text-slate-400 flex items-center gap-1">
-                            <Mail className="w-3 h-3 text-slate-500" />
+                          <div className="font-semibold text-slate-900">{u.name}</div>
+                          <div className="text-xs text-slate-500 flex items-center gap-1">
+                            <Mail className="w-3 h-3 text-slate-400" />
                             {u.email}
                           </div>
                         </div>
@@ -189,52 +189,52 @@ export const UsersPage: React.FC = () => {
       </div>
 
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-indigo-400" />
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-indigo-600" />
               Provision Enterprise User
             </h2>
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Alex Vance"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g., avance@sentinelforge.local"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Initial Password</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Initial Password</label>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Min 8 characters, numbers & symbols"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Assigned RBAC Role</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Assigned RBAC Role</label>
                 <select
                   value={roleName}
                   onChange={(e) => setRoleName(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-indigo-500"
                 >
                   <option value="VIEWER">VIEWER (Read-Only Audit)</option>
                   <option value="DEVELOPER">DEVELOPER (Scan & DLPs)</option>
@@ -246,13 +246,13 @@ export const UsersPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-lg transition-colors"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   Provision User
                 </button>

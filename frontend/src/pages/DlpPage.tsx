@@ -80,7 +80,7 @@ export const DlpPage: React.FC = () => {
                 <button
                   key={preset.name}
                   onClick={() => setContent(preset.content)}
-                  className="px-2 py-0.5 rounded bg-sentinel-900 hover:bg-sentinel-800 text-[10px] font-mono text-cyan-300 border border-sentinel-700/80 transition-colors"
+                  className="px-2 py-0.5 rounded bg-cyan-50 hover:bg-cyan-100 text-[10px] font-mono text-cyan-700 border border-cyan-200 transition-colors font-medium"
                 >
                   {preset.name.split(' ')[0]}
                 </button>
@@ -126,10 +126,10 @@ export const DlpPage: React.FC = () => {
                     <span
                       className={`text-sm font-mono font-bold px-2.5 py-1 rounded border ${
                         scanResult.classification === 'RESTRICTED'
-                          ? 'bg-red-950/90 text-red-300 border-red-700'
+                          ? 'bg-red-50 text-red-700 border-red-200'
                           : scanResult.classification === 'CONFIDENTIAL'
-                          ? 'bg-orange-950/90 text-orange-300 border-orange-700'
-                          : 'bg-emerald-950/90 text-emerald-300 border-emerald-700'
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : 'bg-emerald-50 text-emerald-700 border-emerald-200'
                       }`}
                     >
                       {scanResult.classification}
@@ -143,10 +143,10 @@ export const DlpPage: React.FC = () => {
                     <span
                       className={`text-sm font-mono font-bold px-2.5 py-1 rounded border ${
                         scanResult.action === 'BLOCK'
-                          ? 'bg-red-950/90 text-red-300 border-red-700'
+                          ? 'bg-red-50 text-red-700 border-red-200'
                           : scanResult.action === 'WARN'
-                          ? 'bg-yellow-950/90 text-yellow-300 border-yellow-700'
-                          : 'bg-emerald-950/90 text-emerald-300 border-emerald-700'
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : 'bg-emerald-50 text-emerald-700 border-emerald-200'
                       }`}
                     >
                       {scanResult.action}

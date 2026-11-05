@@ -67,15 +67,15 @@ export const AuditLogsPage: React.FC = () => {
             placeholder="Search by Actor ID, Action, or Resource..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+            className="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
           />
         </div>
         <div className="relative sm:w-64">
-          <Filter className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+          <Filter className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+            className="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-indigo-500"
           >
             <option value="">All Actions</option>
             <option value="USER_LOGIN">USER_LOGIN</option>
@@ -88,20 +88,20 @@ export const AuditLogsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-slate-950 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
+          <table className="w-full text-left text-sm text-slate-700">
+            <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="px-6 py-4">Timestamp (UTC)</th>
-                <th className="px-6 py-4">Action</th>
-                <th className="px-6 py-4">Actor</th>
-                <th className="px-6 py-4">Resource</th>
-                <th className="px-6 py-4">Result</th>
-                <th className="px-6 py-4">Details / Metadata</th>
+                <th className="px-6 py-4 font-semibold">Timestamp (UTC)</th>
+                <th className="px-6 py-4 font-semibold">Action</th>
+                <th className="px-6 py-4 font-semibold">Actor</th>
+                <th className="px-6 py-4 font-semibold">Resource</th>
+                <th className="px-6 py-4 font-semibold">Result</th>
+                <th className="px-6 py-4 font-semibold">Details / Metadata</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-slate-200">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
@@ -116,35 +116,35 @@ export const AuditLogsPage: React.FC = () => {
                 </tr>
               ) : (
                 filteredLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="px-6 py-4 text-xs font-mono text-slate-400">
+                  <tr key={log.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4 text-xs font-mono text-slate-600">
                       {new Date(log.timestamp).toISOString()}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-indigo-300 border border-slate-700">
+                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">
                         {log.action}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-xs text-slate-300 font-mono">
+                    <td className="px-6 py-4 text-xs text-slate-700 font-mono">
                       {log.actor_id || 'SYSTEM_DAEMON'}
                     </td>
-                    <td className="px-6 py-4 text-xs text-slate-400">
+                    <td className="px-6 py-4 text-xs text-slate-600">
                       {log.resource_type} {log.resource_id ? `(${log.resource_id.substring(0, 8)}...)` : ''}
                     </td>
                     <td className="px-6 py-4">
                       {log.result === 'SUCCESS' || log.result === 'ALLOWED' ? (
-                        <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400">
+                        <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           {log.result}
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1.5 text-xs font-medium text-rose-400">
+                        <span className="flex items-center gap-1.5 text-xs font-medium text-rose-600">
                           <XCircle className="w-3.5 h-3.5" />
                           {log.result}
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-xs text-slate-400 font-mono max-w-xs truncate">
+                    <td className="px-6 py-4 text-xs text-slate-600 font-mono max-w-xs truncate">
                       {log.metadata_payload ? JSON.stringify(log.metadata_payload) : '-'}
                     </td>
                   </tr>

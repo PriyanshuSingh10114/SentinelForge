@@ -33,7 +33,7 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 border-r border-sentinel-800 bg-sentinel-950 flex flex-col justify-between py-4">
+    <aside className="w-64 border-r border-slate-200 bg-white flex flex-col justify-between py-4 shadow-sm">
       <div className="space-y-6 px-3">
         <div>
           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500 px-3 mb-2">
@@ -50,8 +50,8 @@ export const Sidebar: React.FC = () => {
                   className={({ isActive }) =>
                     `flex items-center space-x-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                       isActive
-                        ? 'bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 shadow-sm'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-sentinel-900'
+                        ? 'bg-cyan-50 text-cyan-700 font-semibold border border-cyan-200 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`
                   }
                 >
@@ -65,7 +65,7 @@ export const Sidebar: React.FC = () => {
 
         {isAdmin && (
           <div>
-            <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-purple-400/80 px-3 mb-2">
+            <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-purple-700 px-3 mb-2">
               Administration (Gated)
             </div>
             <nav className="space-y-1">
@@ -78,8 +78,8 @@ export const Sidebar: React.FC = () => {
                     className={({ isActive }) =>
                       `flex items-center space-x-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                         isActive
-                          ? 'bg-purple-950/60 text-purple-300 border border-purple-800/60 shadow-sm'
-                          : 'text-slate-400 hover:text-slate-200 hover:bg-sentinel-900'
+                          ? 'bg-purple-50 text-purple-700 font-semibold border border-purple-200 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                       }`
                     }
                   >
@@ -103,8 +103,8 @@ export const Sidebar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center space-x-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                     isActive
-                      ? 'bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-sentinel-900'
+                      ? 'bg-cyan-50 text-cyan-700 font-semibold border border-cyan-200 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`
                 }
               >
@@ -116,9 +116,9 @@ export const Sidebar: React.FC = () => {
         )}
       </div>
 
-      <div className="px-6 text-[11px] font-mono text-slate-500 border-t border-sentinel-800/60 pt-4">
+      <div className="px-6 text-[11px] font-mono text-slate-500 border-t border-slate-200 pt-4">
         <div>SentinelForge v1.0.0</div>
-        <div className="text-[10px] text-slate-600">Deterministic Control Core</div>
+        <div className="text-[10px] text-slate-400">Deterministic Control Core</div>
       </div>
     </aside>
   );

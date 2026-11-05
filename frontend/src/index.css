@@ -75,6 +75,7 @@ input::placeholder, textarea::placeholder {
   color: #94a3b8 !important;
 }
 
+/* Canvas & Card Elevation */
 .bg-sentinel-950,
 .bg-slate-950 {
   background-color: #f8fafc !important;
@@ -89,16 +90,148 @@ input::placeholder, textarea::placeholder {
 }
 
 .bg-sentinel-900\/90,
+.bg-sentinel-900\/70,
+.bg-sentinel-900\/60,
 .bg-sentinel-900\/50,
-.bg-slate-900\/50 {
+.bg-sentinel-900\/40,
+.bg-slate-900\/90,
+.bg-slate-900\/80,
+.bg-slate-900\/60,
+.bg-slate-900\/50,
+.bg-slate-900\/40 {
   background-color: #ffffff !important;
 }
 
+.bg-sentinel-800,
+.bg-slate-800 {
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+}
+
+/* Colored Badge Background Overrides */
+.bg-cyan-950,
+.bg-cyan-950\/80,
+.bg-cyan-950\/60,
+.bg-cyan-950\/40 {
+  background-color: #ecfeff !important;
+  color: #0369a1 !important;
+}
+
+.bg-purple-950,
+.bg-purple-950\/80,
+.bg-purple-950\/60,
+.bg-purple-950\/40 {
+  background-color: #faf5ff !important;
+  color: #7e22ce !important;
+}
+
+.bg-indigo-950,
+.bg-indigo-950\/80,
+.bg-indigo-950\/60,
+.bg-indigo-950\/40 {
+  background-color: #eef2ff !important;
+  color: #4338ca !important;
+}
+
+.bg-red-950,
+.bg-red-950\/90,
+.bg-red-950\/80,
+.bg-red-950\/60,
+.bg-red-950\/40 {
+  background-color: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+
+.bg-emerald-950,
+.bg-emerald-950\/80,
+.bg-emerald-950\/60,
+.bg-emerald-950\/40 {
+  background-color: #ecfdf5 !important;
+  color: #047857 !important;
+}
+
+.bg-blue-950,
+.bg-blue-950\/80,
+.bg-blue-950\/60,
+.bg-blue-950\/40 {
+  background-color: #eff6ff !important;
+  color: #1d4ed8 !important;
+}
+
+.bg-amber-950,
+.bg-amber-950\/40,
+.bg-amber-950\/30 {
+  background-color: #fffbeb !important;
+  color: #b45309 !important;
+}
+
+/* Modal Backdrops */
+.bg-black\/70,
+.bg-black\/60,
+.bg-black\/50,
+.bg-black\/40 {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+/* Table Headers */
+thead.bg-slate-950,
+thead.bg-sentinel-950,
+thead {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+}
+
+/* Borders & Dividers */
 .border-sentinel-800,
+.border-sentinel-700,
+.border-sentinel-700\/80,
 .border-slate-800,
 .border-slate-700,
-.border-sentinel-700\/80 {
+.border-slate-600 {
   border-color: #e2e8f0 !important;
+}
+
+.border-cyan-800,
+.border-cyan-800\/60,
+.border-cyan-800\/50,
+.border-cyan-700,
+.border-cyan-700\/60 {
+  border-color: #bae6fd !important;
+}
+
+.border-purple-800,
+.border-purple-800\/60,
+.border-purple-700,
+.border-purple-700\/60 {
+  border-color: #e9d5ff !important;
+}
+
+.border-indigo-800,
+.border-indigo-700 {
+  border-color: #c7d2fe !important;
+}
+
+.border-red-900,
+.border-red-800,
+.border-red-800\/80,
+.border-red-700,
+.border-red-700\/80 {
+  border-color: #fecaca !important;
+}
+
+.border-emerald-700,
+.border-emerald-700\/80 {
+  border-color: #a7f3d0 !important;
+}
+
+.border-blue-700,
+.border-blue-700\/60 {
+  border-color: #bfdbfe !important;
+}
+
+.border-amber-800,
+.border-amber-800\/40 {
+  border-color: #fde68a !important;
 }
 
 .divide-slate-800 > :not([hidden]) ~ :not([hidden]) {
@@ -123,18 +256,53 @@ input::placeholder, textarea::placeholder {
   color: #64748b !important;
 }
 
+.text-cyan-200,
 .text-cyan-300,
-.text-cyan-400 {
+.text-cyan-400,
+.text-cyan-400\/90,
+.text-cyan-400\/80 {
   color: #0284c7 !important;
 }
 
+.text-purple-300,
+.text-purple-400 {
+  color: #7e22ce !important;
+}
+
+.text-indigo-300,
 .text-indigo-400 {
-  color: #4f46e5 !important;
+  color: #4338ca !important;
+}
+
+.text-red-300,
+.text-red-400 {
+  color: #b91c1c !important;
+}
+
+.text-emerald-300,
+.text-emerald-400 {
+  color: #047857 !important;
+}
+
+.text-amber-300,
+.text-amber-400,
+.text-amber-400\/90 {
+  color: #b45309 !important;
+}
+
+.text-blue-300 {
+  color: #1d4ed8 !important;
 }
 
 /* Hover & Interactive Polish */
 .hover\:bg-slate-800\/40:hover,
+.hover\:bg-slate-800:hover,
+.hover\:bg-slate-700:hover,
 .hover\:bg-sentinel-900:hover,
-.hover\:bg-sentinel-800:hover {
+.hover\:bg-sentinel-900\/50:hover,
+.hover\:bg-sentinel-800:hover,
+.hover\:bg-sentinel-700:hover,
+.hover\:bg-cyan-950:hover {
   background-color: #f1f5f9 !important;
+  color: #0f172a !important;
 }

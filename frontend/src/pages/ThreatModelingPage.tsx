@@ -61,19 +61,19 @@ export const ThreatModelingPage: React.FC = () => {
   const getStrideBadge = (cat: string) => {
     switch (cat) {
       case 'SPOOFING':
-        return 'bg-blue-950/80 text-blue-300 border-blue-700/60';
+        return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'TAMPERING':
-        return 'bg-amber-950/80 text-amber-300 border-amber-700/60';
+        return 'bg-amber-50 text-amber-800 border-amber-200';
       case 'REPUDIATION':
-        return 'bg-slate-900/80 text-slate-300 border-slate-700/60';
+        return 'bg-slate-100 text-slate-700 border-slate-200';
       case 'INFO_DISCLOSURE':
-        return 'bg-purple-950/80 text-purple-300 border-purple-700/60';
+        return 'bg-purple-50 text-purple-700 border-purple-200';
       case 'DOS':
-        return 'bg-red-950/80 text-red-300 border-red-700/60';
+        return 'bg-red-50 text-red-700 border-red-200';
       case 'ELEVATION':
-        return 'bg-orange-950/80 text-orange-300 border-orange-700/60';
+        return 'bg-orange-50 text-orange-700 border-orange-200';
       default:
-        return 'bg-slate-800 text-slate-300 border-slate-700';
+        return 'bg-slate-100 text-slate-700 border-slate-200';
     }
   };
 
@@ -156,8 +156,8 @@ export const ThreatModelingPage: React.FC = () => {
                 onClick={() => setSelectedModel(m)}
                 className={`w-full text-left p-3 rounded-lg border text-xs transition-colors ${
                   selectedModel?.id === m.id
-                    ? 'bg-cyan-950/60 border-cyan-800 text-cyan-200'
-                    : 'bg-sentinel-900/60 border-sentinel-800 text-slate-400 hover:bg-sentinel-900 hover:text-slate-200'
+                    ? 'bg-cyan-50 border-cyan-200 text-cyan-800 font-semibold'
+                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
                 <div className="font-semibold text-slate-200">{m.name}</div>

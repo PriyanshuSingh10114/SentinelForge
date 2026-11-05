@@ -95,51 +95,51 @@ export const PoliciesPage: React.FC = () => {
       </div>
 
       {error && (
-        <div className="p-4 bg-red-950/40 border border-red-800 rounded-lg text-red-300 text-sm flex items-center gap-2">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 flex-shrink-0" />
           {error}
         </div>
       )}
 
       {loading ? (
-        <div className="text-center py-12 text-slate-400">Loading security policies...</div>
+        <div className="text-center py-12 text-slate-500">Loading security policies...</div>
       ) : policies.length === 0 ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-12 text-center text-slate-400">
-          <Shield className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-          <p className="text-lg font-medium text-slate-300">No active policies configured</p>
+        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center text-slate-500">
+          <Shield className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+          <p className="text-lg font-medium text-slate-800">No active policies configured</p>
           <p className="text-sm text-slate-500 mt-1">Click above to initialize your first automated security rule.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {policies.map((p) => (
-            <div key={p.id} className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between hover:border-slate-700 transition-colors">
+            <div key={p.id} className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between hover:border-slate-300 transition-colors shadow-sm">
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-xs font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800">
+                    <span className="px-2 py-0.5 rounded text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
                       {p.policy_type}
                     </span>
-                    <h3 className="font-semibold text-white text-base">{p.name}</h3>
+                    <h3 className="font-semibold text-slate-900 text-base">{p.name}</h3>
                   </div>
                   <button
                     onClick={() => handleToggle(p)}
-                    className="text-slate-400 hover:text-white transition-colors"
+                    className="text-slate-400 hover:text-slate-700 transition-colors"
                     title={p.enabled ? "Disable Policy" : "Enable Policy"}
                   >
                     {p.enabled ? (
-                      <ToggleRight className="w-7 h-7 text-emerald-400" />
+                      <ToggleRight className="w-7 h-7 text-emerald-600" />
                     ) : (
-                      <ToggleLeft className="w-7 h-7 text-slate-600" />
+                      <ToggleLeft className="w-7 h-7 text-slate-400" />
                     )}
                   </button>
                 </div>
-                <p className="text-sm text-slate-400 mb-4">{p.description}</p>
-                <div className="bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-300 overflow-x-auto">
+                <p className="text-sm text-slate-600 mb-4">{p.description}</p>
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-700 overflow-x-auto">
                   <pre>{JSON.stringify(p.configuration, null, 2)}</pre>
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
-                <span>Status: <strong className={p.enabled ? "text-emerald-400" : "text-amber-500"}>{p.enabled ? 'ACTIVE' : 'DISABLED'}</strong></span>
+              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                <span>Status: <strong className={p.enabled ? "text-emerald-700" : "text-amber-700"}>{p.enabled ? 'ACTIVE' : 'DISABLED'}</strong></span>
                 <span>Configured: {new Date(p.created_at).toLocaleDateString()}</span>
               </div>
             </div>
@@ -148,30 +148,30 @@ export const PoliciesPage: React.FC = () => {
       )}
 
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <FileCode className="w-5 h-5 text-indigo-400" />
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <FileCode className="w-5 h-5 text-indigo-600" />
               Configure Security Policy
             </h2>
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Policy Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Policy Name</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Block Production AWS Secrets Ingress"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Type</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Type</label>
                 <select
                   value={policyType}
                   onChange={(e) => setPolicyType(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-indigo-500"
                 >
                   <option value="DLP">Data Loss Prevention (DLP)</option>
                   <option value="RULE">Correlation Rule</option>
@@ -180,35 +180,35 @@ export const PoliciesPage: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Description</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Description</label>
                 <textarea
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe enforcement logic and incident trigger boundaries..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Configuration (JSON)</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Configuration (JSON)</label>
                 <textarea
                   rows={4}
                   value={configJson}
                   onChange={(e) => setConfigJson(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-mono text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-lg transition-colors"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   Save Policy
                 </button>

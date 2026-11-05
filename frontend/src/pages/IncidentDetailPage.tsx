@@ -176,7 +176,7 @@ export const IncidentDetailPage: React.FC = () => {
         </div>
 
         {actionError && (
-          <div className="mt-4 p-2.5 bg-red-950/60 border border-red-800 rounded-lg text-xs text-red-300">
+          <div className="mt-4 p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
             {actionError}
           </div>
         )}
@@ -231,7 +231,7 @@ export const IncidentDetailPage: React.FC = () => {
                   className="p-3 rounded-lg bg-sentinel-900/60 border border-sentinel-800/80 flex items-center justify-between"
                 >
                   <div className="flex items-center space-x-3">
-                    <span className="text-xs font-mono font-bold text-red-400 bg-red-950/80 border border-red-900 rounded px-2 py-0.5">
+                    <span className="text-xs font-mono font-bold text-red-700 bg-red-50 border border-red-200 rounded px-2 py-0.5">
                       +{f.points}
                     </span>
                     <div>
@@ -496,10 +496,10 @@ export const IncidentDetailPage: React.FC = () => {
                       <span
                         className={`text-[10px] font-mono px-2 py-0.5 rounded font-medium border ${
                           action.status === 'PENDING_APPROVAL'
-                            ? 'bg-amber-950/80 text-amber-300 border-amber-700/80'
+                            ? 'bg-amber-50 text-amber-800 border-amber-200'
                             : action.status === 'EXECUTED'
-                            ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80'
-                            : 'bg-red-950/80 text-red-300 border-red-700/80'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-red-50 text-red-700 border-red-200'
                         }`}
                       >
                         {action.status}
@@ -551,35 +551,35 @@ export const IncidentDetailPage: React.FC = () => {
 
       {/* APPROVAL MODAL */}
       {approvalModalAction && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-sentinel-900 border border-sentinel-700 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Confirm Remediation Execution</span>
             </h3>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600">
               You are approving the simulated execution of <strong>{approvalModalAction.action_type}</strong> for incident {incident.incident_number}.
             </p>
             <div>
-              <label className="block text-[11px] font-mono text-slate-400 mb-1">APPROVAL NOTES (OPTIONAL)</label>
+              <label className="block text-[11px] font-mono font-semibold text-slate-700 mb-1">APPROVAL NOTES (OPTIONAL)</label>
               <textarea
                 value={approvalNotes}
                 onChange={(e) => setApprovalNotes(e.target.value)}
                 placeholder="Approved per incident containment procedure..."
-                className="w-full bg-sentinel-950 border border-sentinel-700 rounded p-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="w-full bg-white border border-slate-300 rounded p-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-cyan-600"
                 rows={3}
               />
             </div>
             <div className="flex justify-end space-x-2 pt-2">
               <button
                 onClick={() => setApprovalModalAction(null)}
-                className="px-3 py-1.5 bg-sentinel-800 hover:bg-sentinel-700 rounded text-xs text-slate-300"
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded text-xs text-slate-700 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleApproveAction}
-                className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-medium"
+                className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-medium transition-colors"
               >
                 Confirm & Execute
               </button>
@@ -590,22 +590,22 @@ export const IncidentDetailPage: React.FC = () => {
 
       {/* REJECTION MODAL */}
       {rejectionModalAction && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-sentinel-900 border border-sentinel-700 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-              <XCircle className="w-4 h-4 text-red-400" />
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
+              <XCircle className="w-4 h-4 text-red-600" />
               <span>Reject Remediation Action</span>
             </h3>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600">
               Provide a justification for rejecting <strong>{rejectionModalAction.action_type}</strong>.
             </p>
             <div>
-              <label className="block text-[11px] font-mono text-slate-400 mb-1">REJECTION REASON (REQUIRED)</label>
+              <label className="block text-[11px] font-mono font-semibold text-slate-700 mb-1">REJECTION REASON (REQUIRED)</label>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 placeholder="False positive or alternative operational mitigation selected..."
-                className="w-full bg-sentinel-950 border border-sentinel-700 rounded p-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="w-full bg-white border border-slate-300 rounded p-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-cyan-600"
                 rows={3}
                 required
               />
@@ -613,13 +613,13 @@ export const IncidentDetailPage: React.FC = () => {
             <div className="flex justify-end space-x-2 pt-2">
               <button
                 onClick={() => setRejectionModalAction(null)}
-                className="px-3 py-1.5 bg-sentinel-800 hover:bg-sentinel-700 rounded text-xs text-slate-300"
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded text-xs text-slate-700 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleRejectAction}
-                className="px-4 py-1.5 bg-red-700 hover:bg-red-600 text-white rounded text-xs font-medium"
+                className="px-4 py-1.5 bg-red-700 hover:bg-red-800 text-white rounded text-xs font-medium transition-colors"
               >
                 Reject Action
               </button>

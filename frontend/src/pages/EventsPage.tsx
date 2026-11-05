@@ -194,31 +194,31 @@ export const EventsPage: React.FC = () => {
 
       {/* Ingest Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-sentinel-900 border border-sentinel-700 rounded-xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
-            <h3 className="text-sm font-bold text-white">Ingest Raw Event (JSON)</h3>
-            <p className="text-xs text-slate-400">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <h3 className="text-sm font-bold text-slate-900">Ingest Raw Event (JSON)</h3>
+            <p className="text-xs text-slate-500">
               Paste a heterogeneous payload. The normalization layer will automatically map principal, IP, and severity.
             </p>
             <textarea
               value={ingestPayload}
               onChange={(e) => setIngestPayload(e.target.value)}
               rows={9}
-              className="w-full bg-sentinel-950 border border-sentinel-700 rounded p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500"
+              className="w-full bg-slate-50 border border-slate-300 rounded p-3 text-xs font-mono text-slate-800 focus:outline-none focus:border-cyan-600"
             />
             {ingestStatus && (
-              <div className="text-xs font-mono text-cyan-400">{ingestStatus}</div>
+              <div className="text-xs font-mono text-cyan-700 font-semibold">{ingestStatus}</div>
             )}
             <div className="flex justify-end space-x-2 pt-2">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-3 py-1.5 bg-sentinel-800 rounded text-xs text-slate-300"
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded text-xs text-slate-700 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleIngestSubmit}
-                className="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded text-xs font-medium"
+                className="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded text-xs font-medium transition-colors"
               >
                 Submit Event
               </button>

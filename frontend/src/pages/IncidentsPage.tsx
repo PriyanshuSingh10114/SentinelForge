@@ -155,7 +155,7 @@ export const IncidentsPage: React.FC = () => {
                     <td className="py-3 text-right font-sans">
                       <Link
                         to={`/incidents/${inc.id}`}
-                        className="px-3 py-1 bg-sentinel-800 hover:bg-cyan-950 text-cyan-300 border border-cyan-800/50 rounded text-xs transition-colors inline-flex items-center space-x-1"
+                        className="px-3 py-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-200 rounded text-xs font-medium transition-colors inline-flex items-center space-x-1"
                       >
                         <span>Inspect</span>
                         <ArrowUpRight className="w-3 h-3" />

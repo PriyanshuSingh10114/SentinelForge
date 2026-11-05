@@ -259,7 +259,7 @@ export const DashboardPage: React.FC = () => {
                     <td className="py-2.5 text-right font-sans">
                       <Link
                         to={`/incidents/${inc.id}`}
-                        className="px-2.5 py-1 bg-sentinel-800 hover:bg-cyan-950 text-cyan-300 border border-cyan-800/50 rounded text-xs transition-colors"
+                        className="px-2.5 py-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-200 rounded text-xs font-medium transition-colors"
                       >
                         Investigate
                       </Link>
