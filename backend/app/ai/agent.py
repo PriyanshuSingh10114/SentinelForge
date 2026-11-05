@@ -2,6 +2,15 @@ import json
 import re
 from typing import Any, Dict, List, Optional, TypedDict
 from sqlalchemy.ext.asyncio import AsyncSession
+
+# LangChain 0.3 compatibility shim for langchain_core.globals.get_debug
+try:
+    import langchain
+    if not hasattr(langchain, "debug"):
+        langchain.debug = False
+except ImportError:
+    pass
+
 from langgraph.graph import StateGraph, END
 
 from app.ai.prompts import INVESTIGATOR_SYSTEM_PROMPT, format_investigation_prompt

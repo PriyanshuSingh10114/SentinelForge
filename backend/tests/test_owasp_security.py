@@ -262,8 +262,10 @@ async def test_admin_user_provisioning_and_policy_management():
         admin_token = admin_res.json()["access_token"]
 
         # 2. Provision new Analyst user -> 201 Created
+        import uuid
+        unique_email = f"analyst_{uuid.uuid4().hex[:6]}@sentinelforge.local"
         new_user_payload = {
-            "email": "new.analyst@sentinelforge.local",
+            "email": unique_email,
             "name": "New SOC Analyst",
             "password": "SecurePassword123!",
             "role_name": "Analyst",
@@ -275,7 +277,7 @@ async def test_admin_user_provisioning_and_policy_management():
         )
         assert create_res.status_code == 201
         created_user = create_res.json()
-        assert created_user["email"] == "new.analyst@sentinelforge.local"
+        assert created_user["email"] == unique_email
         assert created_user["role"] == "Analyst"
 
         # 3. Duplicate email rejected -> 409 Conflict
