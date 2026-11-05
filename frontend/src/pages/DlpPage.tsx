@@ -75,7 +75,7 @@ export const DlpPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-white">Interactive Payload & Secret Inspector</h3>
             <div className="flex items-center space-x-2">
-              <span className="text-[11px] font-mono text-slate-400">Load Preset:</span>
+              <span className="text-[11px] font-mono text-slate-500 font-semibold">Sample Test Payloads:</span>
               {DEMO_PAYLOADS.map((preset) => (
                 <button
                   key={preset.name}

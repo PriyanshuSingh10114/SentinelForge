@@ -26,19 +26,53 @@ export const DashboardPage: React.FC = () => {
   const [incidents, setIncidents] = useState<any[]>([]);
   const [dlpCount, setDlpCount] = useState<number>(0);
   const [eventsCount, setEventsCount] = useState<number>(0);
+  const [remediations, setRemediations] = useState<any[]>([]);
+  const [telemetryTrend, setTelemetryTrend] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [incList, dlpList, evList] = await Promise.all([
+        const [incList, dlpList, evList, remList] = await Promise.all([
           api.incidents.list(),
           api.dlp.findings(),
-          api.events.list({ limit: 10 }),
+          api.events.list({ limit: 100 }),
+          api.remediations.list().catch(() => []),
         ]);
         setIncidents(incList);
         setDlpCount(dlpList.length);
         setEventsCount(evList.total);
+        setRemediations(remList);
+
+        // Derive real time-series from persisted event timestamps
+        if (evList.items && evList.items.length > 0) {
+          const buckets: Record<string, { events: number; anomalies: number }> = {};
+          // Sort chronologically
+          const sorted = [...evList.items].sort(
+            (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          );
+
+          for (const ev of sorted) {
+            const d = new Date(ev.timestamp);
+            const timeKey = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (!buckets[timeKey]) {
+              buckets[timeKey] = { events: 0, anomalies: 0 };
+            }
+            buckets[timeKey].events += 1;
+            if (ev.severity === 'CRITICAL' || ev.severity === 'HIGH') {
+              buckets[timeKey].anomalies += 1;
+            }
+          }
+
+          const trendData = Object.entries(buckets).map(([time, data]) => ({
+            time,
+            events: data.events,
+            anomalies: data.anomalies,
+          }));
+          setTelemetryTrend(trendData);
+        } else {
+          setTelemetryTrend([]);
+        }
       } catch (e) {
         console.error('Failed loading dashboard telemetry', e);
       } finally {
@@ -52,19 +86,39 @@ export const DashboardPage: React.FC = () => {
   const highCount = incidents.filter((i) => i.severity === 'HIGH').length;
   const openCount = incidents.filter((i) => i.status === 'OPEN' || i.status === 'INVESTIGATING').length;
 
-  // Real-time posture score calculated from system events and incidents
-  const postureScore = Math.max(30, 100 - criticalCount * 18 - highCount * 8 - Math.min(20, dlpCount * 3));
+  // Real-time posture score calculated from verified system telemetry
+  const postureScore =
+    incidents.length === 0 && dlpCount === 0 && eventsCount === 0
+      ? 100
+      : Math.max(30, 100 - criticalCount * 18 - highCount * 8 - Math.min(20, dlpCount * 3));
 
-  // Synthetic frequency data for telemetry chart
-  const telemetryTrend = [
-    { time: '14:00', events: 12, anomalies: 0 },
-    { time: '15:00', events: 19, anomalies: 1 },
-    { time: '16:00', events: 28, anomalies: 2 },
-    { time: '17:00', events: 45, anomalies: 5 },
-    { time: '18:00', events: 32, anomalies: 3 },
-    { time: '19:00', events: 58, anomalies: 8 },
-    { time: '20:00', events: eventsCount || 42, anomalies: criticalCount },
-  ];
+  // Compute real Mean Time to Investigate (MTTI) from actual resolved incidents
+  const resolvedIncidents = incidents.filter(
+    (i) => (i.status === 'RESOLVED' || i.status === 'CLOSED') && i.resolved_at && i.detected_at
+  );
+  let mttiValue = 'N/A';
+  let mttiSub = 'No closed incidents in database';
+  if (resolvedIncidents.length > 0) {
+    const totalMin = resolvedIncidents.reduce(
+      (acc, cur) => acc + (new Date(cur.resolved_at).getTime() - new Date(cur.detected_at).getTime()) / 60000,
+      0
+    );
+    const avgMin = (totalMin / resolvedIncidents.length).toFixed(1);
+    mttiValue = `${avgMin} min`;
+    mttiSub = `Derived from ${resolvedIncidents.length} resolved incident(s)`;
+  }
+
+  // Compute real Human-in-the-Loop approval metrics
+  const pendingRemediations = remediations.filter((r) => r.status === 'PENDING_APPROVAL').length;
+  const executedRemediations = remediations.filter((r) => r.status === 'EXECUTED').length;
+  const gateValue =
+    remediations.length > 0
+      ? `${pendingRemediations} Pending`
+      : '0 Pending Actions';
+  const gateSub =
+    remediations.length > 0
+      ? `${executedRemediations} Approved & Executed`
+      : 'Zero unreviewed actions';
 
   return (
     <div className="space-y-6">
@@ -135,27 +189,37 @@ export const DashboardPage: React.FC = () => {
             </div>
           </div>
           <div className="h-60 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={telemetryTrend}>
-                <defs>
-                  <linearGradient id="colorEvents" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorAnomalies" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="time" stroke="#475569" fontSize={11} />
-                <YAxis stroke="#475569" fontSize={11} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#0c1017', borderColor: '#1e293b', fontSize: '11px', borderRadius: '8px' }}
-                />
-                <Area type="monotone" dataKey="events" stroke="#06b6d4" fillOpacity={1} fill="url(#colorEvents)" name="Events" />
-                <Area type="monotone" dataKey="anomalies" stroke="#ef4444" fillOpacity={1} fill="url(#colorAnomalies)" name="Threat Triggers" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {telemetryTrend.length === 0 ? (
+              <div className="h-full w-full flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-lg p-6 text-center">
+                <Activity className="w-8 h-8 text-slate-300 mb-2" />
+                <p className="text-xs font-semibold text-slate-700">No Telemetry Timestamps Recorded</p>
+                <p className="text-[11px] text-slate-400 mt-1 max-w-xs">
+                  Event velocity is calculated dynamically from persisted event timestamps. Ingest security events to visualize trends.
+                </p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={telemetryTrend}>
+                  <defs>
+                    <linearGradient id="colorEvents" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0284c7" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#0284c7" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorAnomalies" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="time" stroke="#64748b" fontSize={11} />
+                  <YAxis stroke="#64748b" fontSize={11} allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', fontSize: '11px', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                  />
+                  <Area type="monotone" dataKey="events" stroke="#0284c7" fillOpacity={1} fill="url(#colorEvents)" name="Events" />
+                  <Area type="monotone" dataKey="anomalies" stroke="#ef4444" fillOpacity={1} fill="url(#colorAnomalies)" name="Threat Triggers" />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -168,20 +232,20 @@ export const DashboardPage: React.FC = () => {
             <div className="space-y-4">
               <div className="p-3 bg-sentinel-900/60 rounded-lg border border-sentinel-800/80">
                 <div className="text-[11px] text-slate-400">Mean Time to Investigate (MTTI)</div>
-                <div className="text-xl font-bold font-mono text-emerald-400 mt-0.5">2.4 min</div>
-                <div className="text-[10px] text-slate-500">Accelerated by LangGraph agent</div>
+                <div className="text-xl font-bold font-mono text-emerald-600 mt-0.5">{mttiValue}</div>
+                <div className="text-[10px] text-slate-500">{mttiSub}</div>
               </div>
 
               <div className="p-3 bg-sentinel-900/60 rounded-lg border border-sentinel-800/80">
                 <div className="text-[11px] text-slate-400">Human Approval Gate Status</div>
-                <div className="text-xl font-bold font-mono text-cyan-400 mt-0.5">100% Gated</div>
-                <div className="text-[10px] text-slate-500">Zero autonomous destructive actions</div>
+                <div className="text-xl font-bold font-mono text-cyan-700 mt-0.5">{gateValue}</div>
+                <div className="text-[10px] text-slate-500">{gateSub}</div>
               </div>
 
               <div className="p-3 bg-sentinel-900/60 rounded-lg border border-sentinel-800/80">
                 <div className="text-[11px] text-slate-400">Total Telemetry Ingested</div>
                 <div className="text-xl font-bold font-mono text-white mt-0.5">{eventsCount} Events</div>
-                <div className="text-[10px] text-slate-500">Normalized to canonical entity schema</div>
+                <div className="text-[10px] text-slate-500">Persisted in database ledger</div>
               </div>
             </div>
           </div>

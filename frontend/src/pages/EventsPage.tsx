@@ -70,30 +70,52 @@ export const EventsPage: React.FC = () => {
     }
   };
 
+  const [simulating, setSimulating] = useState(false);
+
+  const handleSimulate = async () => {
+    setSimulating(true);
+    try {
+      await api.events.simulate();
+      await fetchEvents();
+    } catch (err: any) {
+      alert(`Simulation error: ${err.message}`);
+    } finally {
+      setSimulating(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-white flex items-center space-x-2">
-            <Radio className="w-5 h-5 text-cyan-400" />
+          <h1 className="text-xl font-bold text-slate-900 flex items-center space-x-2">
+            <Radio className="w-5 h-5 text-indigo-600" />
             <span>Normalized Security Event Telemetry</span>
           </h1>
-          <p className="text-xs font-mono text-slate-400 mt-0.5">
-            Real-time multi-source event stream normalized to canonical entity schema
+          <p className="text-xs font-mono text-slate-500 mt-0.5">
+            Real-time multi-source event stream normalized to canonical entity schema with verified provenance
           </p>
         </div>
 
         <div className="flex items-center space-x-3">
           <button
+            onClick={handleSimulate}
+            disabled={simulating}
+            className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-colors disabled:opacity-50"
+            title="Generate controlled demonstration events tagged as simulated"
+          >
+            <span>{simulating ? 'Generating...' : 'Generate Demo Events'}</span>
+          </button>
+          <button
             onClick={() => setShowModal(true)}
-            className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 shadow-md shadow-cyan-950/40"
+            className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 shadow-sm"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Ingest Test Event</span>
+            <span>Ingest Raw Event</span>
           </button>
           <button
             onClick={fetchEvents}
-            className="p-1.5 bg-sentinel-900 hover:bg-sentinel-800 border border-sentinel-800 rounded text-slate-400 hover:text-slate-200"
+            className="p-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded text-slate-600 transition-colors"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -150,6 +172,7 @@ export const EventsPage: React.FC = () => {
               <thead className="border-b border-sentinel-800 text-[11px] font-mono text-slate-400 uppercase">
                 <tr>
                   <th className="pb-2">Timestamp</th>
+                  <th className="pb-2">Provenance</th>
                   <th className="pb-2">Event Type</th>
                   <th className="pb-2">Severity</th>
                   <th className="pb-2">Actor (Normalized)</th>
@@ -159,33 +182,50 @@ export const EventsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-sentinel-800/60 font-mono">
-                {events.map((e) => (
-                  <tr key={e.id} className="hover:bg-sentinel-900/50 transition-colors">
-                    <td className="py-2.5 text-slate-500 text-[11px]">{new Date(e.timestamp).toLocaleTimeString()}</td>
-                    <td className="py-2.5 font-bold text-cyan-400">{e.event_type}</td>
-                    <td className="py-2.5">
-                      <span
-                        className={
-                          e.severity === 'CRITICAL'
-                            ? 'badge-critical'
-                            : e.severity === 'HIGH'
-                            ? 'badge-high'
-                            : e.severity === 'MEDIUM'
-                            ? 'badge-medium'
-                            : 'badge-info'
-                        }
-                      >
-                        {e.severity}
-                      </span>
-                    </td>
-                    <td className="py-2.5 text-slate-200">{e.actor}</td>
-                    <td className="py-2.5 text-slate-400">{e.source_ip}</td>
-                    <td className="py-2.5 text-slate-500">{e.source}</td>
-                    <td className="py-2.5 text-slate-300 truncate max-w-xs">
-                      {(e.raw_payload || {}).get?.('resource') || (e.normalized_payload || {}).resource || 'N/A'}
-                    </td>
-                  </tr>
-                ))}
+                {events.map((e) => {
+                  const isSimulated =
+                    e.source === 'simulated_generator' ||
+                    e.raw_payload?.is_simulated === true ||
+                    e.normalized_payload?.is_simulated === true;
+                  return (
+                    <tr key={e.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="py-2.5 text-slate-500 text-[11px]">{new Date(e.timestamp).toLocaleTimeString()}</td>
+                      <td className="py-2.5">
+                        <span
+                          className={`px-1.5 py-0.5 rounded text-[10px] font-semibold border ${
+                            isSimulated
+                              ? 'bg-amber-50 text-amber-800 border-amber-200'
+                              : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          }`}
+                        >
+                          {isSimulated ? 'SIMULATED' : 'LIVE'}
+                        </span>
+                      </td>
+                      <td className="py-2.5 font-bold text-indigo-600">{e.event_type}</td>
+                      <td className="py-2.5">
+                        <span
+                          className={
+                            e.severity === 'CRITICAL'
+                              ? 'badge-critical'
+                              : e.severity === 'HIGH'
+                              ? 'badge-high'
+                              : e.severity === 'MEDIUM'
+                              ? 'badge-medium'
+                              : 'badge-info'
+                          }
+                        >
+                          {e.severity}
+                        </span>
+                      </td>
+                      <td className="py-2.5 text-slate-800 font-medium">{e.actor}</td>
+                      <td className="py-2.5 text-slate-600">{e.source_ip}</td>
+                      <td className="py-2.5 text-slate-500">{e.source}</td>
+                      <td className="py-2.5 text-slate-700 truncate max-w-xs">
+                        {e.raw_payload?.resource || e.normalized_payload?.resource || 'N/A'}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

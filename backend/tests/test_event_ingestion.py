@@ -128,3 +128,20 @@ async def test_unauthenticated_event_ingestion_blocked():
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         res = await client.post("/api/v1/events", json={"user": "attacker", "action": "probe"})
         assert res.status_code == 403 or res.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_simulated_event_ingestion_and_provenance():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        token = await get_analyst_token(client)
+        headers = {"Authorization": f"Bearer {token}"}
+
+        res = await client.post("/api/v1/events/simulate", headers=headers)
+        assert res.status_code == 201
+        events = res.json()
+        assert len(events) >= 3
+        for ev in events:
+            assert ev["source"] == "simulated_generator"
+            assert ev["raw_payload"].get("is_simulated") is True
+            assert ev["normalized_payload"].get("is_simulated") is True

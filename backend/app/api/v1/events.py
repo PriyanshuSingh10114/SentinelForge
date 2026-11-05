@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_db
 from app.models.auth import User
+from app.models.event import SecurityEvent
 from app.schemas.events import (
     BatchEventIngestRequest,
     EventSearchResponse,
@@ -87,6 +88,59 @@ async def list_security_events(
         offset=offset,
     )
     return EventSearchResponse(total=total, items=items)
+
+
+@router.post(
+    "/simulate",
+    response_model=List[NormalizedEventResponse],
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(get_current_user)],
+)
+async def generate_simulated_events(
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Explicitly generate controlled simulated security events for testing and demonstration.
+    All events are tagged with provenance metadata (is_simulated=True, source=simulated_generator).
+    """
+    now = datetime.now(timezone.utc)
+    demo_events = [
+        SecurityEvent(
+            event_type="failed_login",
+            severity="MEDIUM",
+            source="simulated_generator",
+            actor="adversary_sim",
+            source_ip="198.51.100.42",
+            timestamp=now,
+            raw_payload={"attempt": 1, "is_simulated": True, "simulation_source": "demo_generator"},
+            normalized_payload={"is_simulated": True, "source_type": "simulated", "description": "Simulated brute force attempt"},
+        ),
+        SecurityEvent(
+            event_type="failed_login",
+            severity="MEDIUM",
+            source="simulated_generator",
+            actor="adversary_sim",
+            source_ip="198.51.100.42",
+            timestamp=now,
+            raw_payload={"attempt": 2, "is_simulated": True, "simulation_source": "demo_generator"},
+            normalized_payload={"is_simulated": True, "source_type": "simulated", "description": "Simulated brute force attempt"},
+        ),
+        SecurityEvent(
+            event_type="privilege_escalation",
+            severity="CRITICAL",
+            source="simulated_generator",
+            actor="adversary_sim",
+            source_ip="198.51.100.42",
+            timestamp=now,
+            raw_payload={"resource": "arn:aws:iam::123456789012:role/AdminRole", "action": "iam:AttachRolePolicy", "is_simulated": True},
+            normalized_payload={"is_simulated": True, "source_type": "simulated", "description": "Simulated IAM privilege escalation"},
+        ),
+    ]
+    db.add_all(demo_events)
+    await db.commit()
+    for e in demo_events:
+        await db.refresh(e)
+    return demo_events
 
 
 @router.get(

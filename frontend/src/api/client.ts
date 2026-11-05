@@ -83,6 +83,32 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(eventData),
       }),
+    simulate: () =>
+      request<any[]>('/events/simulate', {
+        method: 'POST',
+      }),
+  },
+  scans: {
+    findings: (params: { scanner?: string; severity?: string; status?: string } = {}) => {
+      const q = new URLSearchParams();
+      if (params.scanner) q.append('scanner', params.scanner);
+      if (params.severity) q.append('severity', params.severity);
+      if (params.status) q.append('status', params.status);
+      return request<any[]>(`/scans/findings?${q.toString()}`);
+    },
+    ingest: (data: {
+      scanner: string;
+      rule_id: string;
+      severity: string;
+      file_path: string;
+      line_number?: number;
+      description: string;
+      remediation: string;
+    }) =>
+      request<any>('/scans/ingest', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
   },
   dlp: {
     scan: (content: string, sourceType: string = 'PAYLOAD', sourceId?: string) =>
