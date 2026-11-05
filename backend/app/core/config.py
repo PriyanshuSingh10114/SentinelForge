@@ -1,5 +1,5 @@
 import json
-from typing import List, Union
+from typing import Any, List, Union
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -51,6 +51,13 @@ class Settings(BaseSettings):
 
     # CORS Allowed Origins
     CORS_ORIGINS: Union[List[str], str] = ["http://localhost:5173", "http://localhost:3000"]
+
+    @field_validator("DEBUG", mode="before")
+    @classmethod
+    def assemble_debug(cls, v: Any) -> bool:
+        if isinstance(v, str):
+            return v.lower() in ("true", "1", "t", "yes", "y", "debug", "dev", "development")
+        return bool(v)
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod

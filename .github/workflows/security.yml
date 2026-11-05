@@ -32,13 +32,13 @@ jobs:
         working-directory: ./backend
         run: |
           pip install bandit
-          bandit -r app/ -ll -ii -f screen || true
+          bandit -r app/ -ll -ii -f screen
 
       - name: Dependency Vulnerability Audit
         working-directory: ./backend
         run: |
           pip install pip-audit
-          pip-audit -r requirements.txt || true
+          pip-audit -r requirements.txt
 
   container-security:
     name: Docker Container Image Vulnerability Scan

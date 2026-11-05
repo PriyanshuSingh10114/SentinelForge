@@ -153,3 +153,167 @@ async def test_owasp_a07_identification_and_authentication_failures():
             json={"email": "viewer@sentinelforge.local", "password": "SentinelViewer123!"},
         )
         assert res_subsequent.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_owasp_a01_incident_and_threat_status_authorization():
+    """
+    OWASP A01: Broken Access Control.
+    Ensure read-only Viewers cannot mutate incident life-cycle or suppress threats.
+    """
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        # Login as Viewer
+        viewer_res = await client.post(
+            "/api/v1/auth/login",
+            json={"email": "viewer@sentinelforge.local", "password": "SentinelViewer123!"},
+        )
+        viewer_token = viewer_res.json()["access_token"]
+
+        # Viewer attempts to resolve an incident -> 403 Forbidden
+        inc_res = await client.patch(
+            "/api/v1/incidents/nonexistent-id/status",
+            json={"status": "RESOLVED"},
+            headers={"Authorization": f"Bearer {viewer_token}"},
+        )
+        assert inc_res.status_code == 403
+        assert inc_res.json()["error"]["code"] == "FORBIDDEN"
+
+        # Viewer attempts to mark threat item as FALSE_POSITIVE -> 403 Forbidden
+        threat_res = await client.patch(
+            "/api/v1/threat-models/items/nonexistent-id/status",
+            json={"status": "FALSE_POSITIVE"},
+            headers={"Authorization": f"Bearer {viewer_token}"},
+        )
+        assert threat_res.status_code == 403
+        assert threat_res.json()["error"]["code"] == "FORBIDDEN"
+
+
+@pytest.mark.asyncio
+async def test_scan_findings_and_ingest_rbac():
+    """
+    Verify RBAC on DevSecOps scan endpoints: Developers and Admins can ingest findings;
+    all roles including Viewers can inspect scan findings.
+    """
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        # 1. Login as Developer
+        dev_res = await client.post(
+            "/api/v1/auth/login",
+            json={"email": "developer@sentinelforge.local", "password": "SentinelDev123!"},
+        )
+        dev_token = dev_res.json()["access_token"]
+
+        # 2. Ingest a scan finding as Developer -> 201 Created
+        scan_payload = {
+            "scanner": "bandit",
+            "rule_id": "B105",
+            "severity": "HIGH",
+            "file_path": "backend/app/core/config.py",
+            "line_number": 26,
+            "description": "Hardcoded demo key detected in dev config",
+            "remediation": "Load from environment secrets",
+        }
+        ingest_res = await client.post(
+            "/api/v1/scans/ingest",
+            json=scan_payload,
+            headers={"Authorization": f"Bearer {dev_token}"},
+        )
+        assert ingest_res.status_code == 201
+        finding_id = ingest_res.json()["id"]
+
+        # 3. Login as Viewer
+        viewer_res = await client.post(
+            "/api/v1/auth/login",
+            json={"email": "viewer@sentinelforge.local", "password": "SentinelViewer123!"},
+        )
+        viewer_token = viewer_res.json()["access_token"]
+
+        # 4. Viewer cannot ingest scan findings -> 403 Forbidden
+        viewer_ingest = await client.post(
+            "/api/v1/scans/ingest",
+            json=scan_payload,
+            headers={"Authorization": f"Bearer {viewer_token}"},
+        )
+        assert viewer_ingest.status_code == 403
+
+        # 5. Viewer CAN view scan findings -> 200 OK
+        list_res = await client.get(
+            "/api/v1/scans/findings",
+            headers={"Authorization": f"Bearer {viewer_token}"},
+        )
+        assert list_res.status_code == 200
+        findings = list_res.json()
+        assert any(f["id"] == finding_id for f in findings)
+
+
+@pytest.mark.asyncio
+async def test_admin_user_provisioning_and_policy_management():
+    """
+    Verify Admin-only provisioning of identities and full policy lifecycle.
+    """
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        # 1. Login as Admin
+        admin_res = await client.post(
+            "/api/v1/auth/login",
+            json={"email": "admin@sentinelforge.local", "password": "SentinelAdmin123!"},
+        )
+        admin_token = admin_res.json()["access_token"]
+
+        # 2. Provision new Analyst user -> 201 Created
+        new_user_payload = {
+            "email": "new.analyst@sentinelforge.local",
+            "name": "New SOC Analyst",
+            "password": "SecurePassword123!",
+            "role_name": "Analyst",
+        }
+        create_res = await client.post(
+            "/api/v1/admin/users",
+            json=new_user_payload,
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
+        assert create_res.status_code == 201
+        created_user = create_res.json()
+        assert created_user["email"] == "new.analyst@sentinelforge.local"
+        assert created_user["role"] == "Analyst"
+
+        # 3. Duplicate email rejected -> 409 Conflict
+        dup_res = await client.post(
+            "/api/v1/admin/users",
+            json=new_user_payload,
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
+        assert dup_res.status_code == 409
+
+        # 4. List policies -> 200 OK
+        policies_res = await client.get(
+            "/api/v1/admin/policies",
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
+        assert policies_res.status_code == 200
+        policies = policies_res.json()
+        assert len(policies) >= 1
+        target_policy = policies[0]
+
+        # 5. Update policy -> 200 OK
+        update_res = await client.put(
+            f"/api/v1/admin/policies/{target_policy['id']}",
+            json={"enabled": not target_policy["enabled"]},
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
+        assert update_res.status_code == 200
+        assert update_res.json()["enabled"] != target_policy["enabled"]
+
+        # 6. Non-admin is blocked from user provisioning -> 403 Forbidden
+        analyst_res = await client.post(
+            "/api/v1/auth/login",
+            json={"email": "analyst@sentinelforge.local", "password": "SentinelAnalyst123!"},
+        )
+        analyst_token = analyst_res.json()["access_token"]
+        unauth_create = await client.post(
+            "/api/v1/admin/users",
+            json={"email": "hacker@test.local", "name": "Hacker", "password": "Password123!", "role_name": "Admin"},
+            headers={"Authorization": f"Bearer {analyst_token}"},
+        )
+        assert unauth_create.status_code == 403

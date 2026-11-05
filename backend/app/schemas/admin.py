@@ -10,6 +10,12 @@ class PolicyCreateRequest(BaseModel):
     enabled: bool = True
 
 
+class PolicyUpdateRequest(BaseModel):
+    enabled: Optional[bool] = None
+    configuration: Optional[Dict[str, Any]] = None
+    description: Optional[str] = None
+
+
 class PolicyResponse(BaseModel):
     id: str
     name: str

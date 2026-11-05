@@ -44,7 +44,7 @@ async def list_scan_findings(
     severity: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(require_role("VIEWER")),
+    current_user: User = Depends(require_role("Admin", "Analyst", "Developer", "Viewer")),
 ):
     """
     List normalized SAST, SCA, and secret scan findings.
@@ -67,7 +67,7 @@ async def list_scan_findings(
 async def ingest_scan_finding(
     payload: IngestScanRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(require_role("DEVELOPER")),
+    current_user: User = Depends(require_role("Admin", "Developer")),
 ):
     """
     Ingest a security finding from DevSecOps CI/CD runners (SAST/SCA/Secret).

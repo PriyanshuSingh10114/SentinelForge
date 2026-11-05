@@ -29,7 +29,7 @@
   <img src="https://img.shields.io/badge/RBAC-Server--Side_Gated-0288D1?style=flat-square&logo=auth0" alt="RBAC Gated"/>
   <img src="https://img.shields.io/badge/High--Risk_Actions-Human--in--the--Loop-FF6D00?style=flat-square&logo=probot" alt="HITL Approvals"/>
   <img src="https://img.shields.io/badge/OWASP_Top_10-Tested_&_Verified-2E7D32?style=flat-square&logo=checkmarx" alt="OWASP Verified"/>
-  <img src="https://img.shields.io/badge/Tests-33%20Passed-brightgreen?style=flat-square&logo=pytest" alt="Pytest Passing"/>
+  <img src="https://img.shields.io/badge/Tests-36%20Passed-brightgreen?style=flat-square&logo=pytest" alt="Pytest Passing"/>
   <img src="https://img.shields.io/badge/License-MIT-F57F17?style=flat-square" alt="MIT License"/>
 </p>
 
@@ -141,7 +141,7 @@ The console will be accessible at: **`http://localhost:5173`** (or port specifie
 
 ### Step 3: Run the Complete Test Suite
 
-Verify all 33 unit, correlation, AI, and OWASP security tests:
+Verify all 36 unit, correlation, AI, and OWASP security tests:
 
 ```powershell
 cd backend

@@ -54,7 +54,7 @@ SECURITY_KNOWLEDGE_DOCS = [
     },
 ]
 
-ROLE_RANKS = {"Viewer": 1, "Developer": 2, "Analyst": 3, "Admin": 4}
+ROLE_RANKS = {"VIEWER": 1, "DEVELOPER": 2, "ANALYST": 3, "ADMIN": 4}
 
 
 def search_knowledge_base(query: str, user_role: str = "Analyst", limit: int = 3) -> List[Dict[str, str]]:
@@ -62,13 +62,13 @@ def search_knowledge_base(query: str, user_role: str = "Analyst", limit: int = 3
     Retrieves security knowledge base articles enforcing strict role-based access filtering.
     A Developer or Viewer cannot retrieve Admin-only procedures.
     """
-    user_rank = ROLE_RANKS.get(user_role, 1)
+    user_rank = ROLE_RANKS.get(user_role.strip().upper(), 1)
     query_terms = [t.lower() for t in query.split() if len(t) > 2]
 
     scored = []
     for doc in SECURITY_KNOWLEDGE_DOCS:
         # 1. Enforce RBAC filtering
-        doc_rank = ROLE_RANKS.get(doc["min_role"], 4)
+        doc_rank = ROLE_RANKS.get(doc["min_role"].strip().upper(), 4)
         if user_rank < doc_rank:
             continue  # Authorization gate: exclude document
 

@@ -6,7 +6,7 @@ interface User {
   id: string;
   email: string;
   name: string;
-  role: { id: string; name: string };
+  role: string | { id?: string; name: string };
   is_active: boolean;
   failed_login_attempts: number;
   last_login_at: string | null;
@@ -59,9 +59,11 @@ export const UsersPage: React.FC = () => {
   };
 
   const getRoleBadge = (role: string) => {
-    switch (role) {
+    const r = (role || '').toUpperCase();
+    switch (r) {
       case 'ADMIN':
         return 'bg-purple-950 text-purple-300 border-purple-800';
+      case 'ANALYST':
       case 'SECURITY_ANALYST':
         return 'bg-cyan-950 text-cyan-300 border-cyan-800';
       case 'DEVELOPER':
@@ -142,9 +144,14 @@ export const UsersPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-0.5 rounded text-xs font-semibold border ${getRoleBadge(u.role?.name || '')}`}>
-                        {u.role?.name || 'VIEWER'}
-                      </span>
+                      {(() => {
+                        const roleName = typeof u.role === 'string' ? u.role : (u.role?.name || 'Viewer');
+                        return (
+                          <span className={`px-2 py-0.5 rounded text-xs font-semibold border ${getRoleBadge(roleName)}`}>
+                            {roleName.toUpperCase()}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="px-6 py-4">
                       {u.is_active ? (

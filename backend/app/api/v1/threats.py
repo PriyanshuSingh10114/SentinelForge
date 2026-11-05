@@ -14,7 +14,7 @@ from app.schemas.threat import (
     ThreatModelCreateRequest,
     ThreatModelResponse,
 )
-from app.security.dependencies import get_current_user
+from app.security.dependencies import get_current_user, require_role
 from app.services.audit_service import log_audit_event
 from app.threat_modeling.engine import analyze_architecture_and_generate_threats
 
@@ -104,11 +104,15 @@ async def get_threat_model(
     return model
 
 
-@router.patch("/items/{item_id}/status", response_model=ThreatItemResponse)
+@router.patch(
+    "/items/{item_id}/status",
+    response_model=ThreatItemResponse,
+    dependencies=[Depends(require_role("Admin", "Analyst"))],
+)
 async def update_threat_item_status(
     item_id: str,
     payload: ThreatItemStatusUpdateRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_role("Admin", "Analyst")),
     db: AsyncSession = Depends(get_db),
 ):
     """

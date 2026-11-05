@@ -46,12 +46,15 @@ async def get_current_user(
 def require_role(*allowed_roles: str) -> Callable:
     """
     Server-side authorization dependency ensuring current user holds one of allowed roles.
+    Matches roles case-insensitively for defense-in-depth against casing discrepancies.
     """
+    normalized_allowed = {r.strip().upper() for r in allowed_roles}
+
     async def role_checker(current_user: User = Depends(get_current_user)) -> User:
-        user_role = current_user.role.name if current_user.role else ""
-        if user_role not in allowed_roles:
+        user_role = (current_user.role.name if current_user.role else "").strip().upper()
+        if user_role not in normalized_allowed:
             raise ForbiddenException(
-                f"Role '{user_role}' is not authorized for this operation. Required: {list(allowed_roles)}"
+                f"Role '{current_user.role.name if current_user.role else ''}' is not authorized for this operation. Required: {list(allowed_roles)}"
             )
         return current_user
 

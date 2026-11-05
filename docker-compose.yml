@@ -52,7 +52,7 @@ services:
       - ENVIRONMENT=development
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-sentinel}:${POSTGRES_PASSWORD:-sentinel_dev_secret_replace_in_prod}@postgres:5432/${POSTGRES_DB:-sentinelforge}
       - REDIS_URL=redis://redis:6379/0
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-demo_insecure_jwt_secret_must_change_in_prod}
+      - JWT_SECRET=${JWT_SECRET:-${JWT_SECRET_KEY:-demo-insecure-secret-key-change-in-production-only-min32bytes}}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     networks:
       - sentinel-net

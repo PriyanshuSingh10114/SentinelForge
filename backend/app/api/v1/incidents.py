@@ -20,7 +20,7 @@ from app.schemas.incident import (
     IncidentResponse,
     IncidentStatusUpdateRequest,
 )
-from app.security.dependencies import get_current_user
+from app.security.dependencies import get_current_user, require_role
 from app.services.audit_service import log_audit_event
 
 router = APIRouter(prefix="/incidents", tags=["Incidents & Correlation"])
@@ -132,11 +132,15 @@ async def get_incident_attack_graph(
     return build_attack_graph(incident)
 
 
-@router.patch("/{incident_id}/status", response_model=IncidentResponse)
+@router.patch(
+    "/{incident_id}/status",
+    response_model=IncidentResponse,
+    dependencies=[Depends(require_role("Admin", "Analyst"))],
+)
 async def update_incident_status(
     incident_id: str,
     payload: IncidentStatusUpdateRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_role("Admin", "Analyst")),
     db: AsyncSession = Depends(get_db),
 ):
     """

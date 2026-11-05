@@ -39,6 +39,8 @@ jobs:
         env:
           PYTHONPATH: .
           DATABASE_URL: sqlite+aiosqlite:///./test_ci.db
+          DEBUG: "false"
+          JWT_SECRET: ci_test_secret_key_not_for_prod_12345
           JWT_SECRET_KEY: ci_test_secret_key_not_for_prod_12345
           OPENAI_API_KEY: fake-ci-key-deterministic-fallback
         run: |
