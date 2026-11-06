@@ -24,7 +24,7 @@ router = APIRouter(prefix="/threat-models", tags=["STRIDE Threat Modeling"])
 @router.post("", response_model=ThreatModelResponse, status_code=status.HTTP_201_CREATED)
 async def create_threat_model(
     payload: ThreatModelCreateRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_role("Admin", "Analyst", "Developer")),
     db: AsyncSession = Depends(get_db),
 ):
     """

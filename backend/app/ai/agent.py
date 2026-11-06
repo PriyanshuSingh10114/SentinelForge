@@ -243,18 +243,17 @@ class SecurityInvestigatorGraph:
                     api_key=settings.OPENAI_API_KEY,
                     temperature=0.1,
                 )
+                structured_llm = llm.with_structured_output(InvestigationReportOutput)
                 prompt_text = format_investigation_prompt(inc, events, act, perms, docs)
                 messages = [
                     SystemMessage(content=INVESTIGATOR_SYSTEM_PROMPT),
                     HumanMessage(content=prompt_text),
                 ]
-                response = await llm.ainvoke(messages)
-                content = response.content
-                # Extract JSON from markdown fences if any
-                match = re.search(r"```json\s*(\{.*?\})\s*```", content, re.DOTALL)
-                json_str = match.group(1) if match else content
-                parsed_dict = json.loads(json_str)
-                report = InvestigationReportOutput(**parsed_dict)
+                report = await structured_llm.ainvoke(messages)
+                if isinstance(report, dict):
+                    report = InvestigationReportOutput(**report)
+                if not getattr(report, "model_used", None) or report.model_used == "deterministic-rule-synthesis-engine":
+                    report.model_used = f"{settings.OPENAI_MODEL}-live-orchestrated"
                 return {"report": report}
             except Exception as e:
                 logger.warning(f"LLM API call failed or timed out, executing deterministic fallback: {str(e)}")

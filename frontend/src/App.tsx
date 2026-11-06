@@ -32,6 +32,16 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
+const RoleRoute: React.FC<{ allowedRoles: string[]; children: React.ReactNode }> = ({ allowedRoles, children }) => {
+  const { user } = useAuth();
+  const normalizedAllowed = allowedRoles.map((r) => r.toUpperCase());
+  const userRole = (user?.role || '').toUpperCase();
+  if (!normalizedAllowed.includes(userRole)) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+};
+
 export const App: React.FC = () => {
   return (
     <AuthProvider>
@@ -55,9 +65,30 @@ export const App: React.FC = () => {
             <Route path="threat-modeling" element={<ThreatModelingPage />} />
             <Route path="threats" element={<ThreatModelingPage />} />
             <Route path="scans" element={<ScansPage />} />
-            <Route path="policies" element={<PoliciesPage />} />
-            <Route path="users" element={<UsersPage />} />
-            <Route path="audit-logs" element={<AuditLogsPage />} />
+            <Route
+              path="policies"
+              element={
+                <RoleRoute allowedRoles={['Admin']}>
+                  <PoliciesPage />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="users"
+              element={
+                <RoleRoute allowedRoles={['Admin']}>
+                  <UsersPage />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="audit-logs"
+              element={
+                <RoleRoute allowedRoles={['Admin', 'Analyst']}>
+                  <AuditLogsPage />
+                </RoleRoute>
+              }
+            />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

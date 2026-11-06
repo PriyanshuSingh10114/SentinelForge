@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import {
   ShieldCheck,
   Plus,
@@ -31,6 +32,9 @@ const PRESET_TEMPLATES = {
 };
 
 export const ThreatModelingPage: React.FC = () => {
+  const { user } = useAuth();
+  const isViewer = user?.role === 'Viewer';
+  const isAnalystOrAdmin = user?.role === 'Admin' || user?.role === 'Analyst';
   const [models, setModels] = useState<any[]>([]);
   const [selectedModel, setSelectedModel] = useState<any | null>(null);
   const [modelName, setModelName] = useState(PRESET_TEMPLATES.honeywell.name);
@@ -251,8 +255,9 @@ export const ThreatModelingPage: React.FC = () => {
             <div className="flex justify-end items-center pt-1">
               <button
                 type="submit"
-                disabled={creating}
-                className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-xs font-semibold flex items-center space-x-1.5 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                disabled={creating || isViewer}
+                title={isViewer ? 'Viewer role is read-only. Cannot generate threat models.' : 'Generate STRIDE Model'}
+                className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-xs font-semibold flex items-center space-x-1.5 shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {creating ? (
                   <>
@@ -262,7 +267,7 @@ export const ThreatModelingPage: React.FC = () => {
                 ) : (
                   <>
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>Generate STRIDE Model</span>
+                    <span>{isViewer ? 'Threat Modeling (Admin/Analyst only)' : 'Generate STRIDE Model'}</span>
                   </>
                 )}
               </button>
@@ -366,7 +371,9 @@ export const ThreatModelingPage: React.FC = () => {
                     <select
                       value={item.status}
                       onChange={(e) => handleUpdateItemStatus(item.id, e.target.value)}
-                      className="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 shadow-sm cursor-pointer"
+                      disabled={!isAnalystOrAdmin}
+                      title={!isAnalystOrAdmin ? 'Analyst or Admin role required to update threat item status' : 'Update status'}
+                      className="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       <option value="OPEN">OPEN</option>
                       <option value="MITIGATED">MITIGATED</option>

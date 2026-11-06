@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { Binary, ShieldCheck, AlertTriangle, Terminal, RefreshCw, Plus } from 'lucide-react';
 
 export const ScansPage: React.FC = () => {
+  const { user } = useAuth();
+  const isViewer = user?.role === 'Viewer';
   const [filter, setFilter] = useState('');
   const [findings, setFindings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -173,11 +176,12 @@ export const ScansPage: React.FC = () => {
             </p>
             <button
               onClick={handleSimulateScan}
-              disabled={simulating}
-              className="mt-4 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-medium transition-colors inline-flex items-center space-x-1.5"
+              disabled={simulating || isViewer}
+              title={isViewer ? 'Viewer role is read-only. Cannot trigger scan simulations.' : 'Simulate findings'}
+              className="mt-4 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-medium transition-colors inline-flex items-center space-x-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Terminal className="w-3.5 h-3.5" />
-              <span>{simulating ? 'Ingesting Findings...' : 'Simulate DevSecOps Scan Findings'}</span>
+              <span>{simulating ? 'Ingesting Findings...' : isViewer ? 'Scan Simulation (Admin/Dev only)' : 'Simulate DevSecOps Scan Findings'}</span>
             </button>
           </div>
         ) : (
@@ -225,14 +229,15 @@ export const ScansPage: React.FC = () => {
                       <select
                         value={f.status}
                         onChange={(e) => handleStatusChange(f.id, e.target.value)}
-                        className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-md border focus:outline-none transition-all cursor-pointer shadow-sm ${
+                        disabled={isViewer}
+                        className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-md border focus:outline-none transition-all cursor-pointer shadow-sm disabled:opacity-60 disabled:cursor-not-allowed ${
                           f.status === 'RESOLVED'
                             ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                             : f.status === 'FALSE_POSITIVE'
                             ? 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
                             : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
                         }`}
-                        title="Click to toggle status (OPEN, RESOLVED, FALSE_POSITIVE)"
+                        title={isViewer ? 'Viewer role is read-only' : 'Click to toggle status (OPEN, RESOLVED, FALSE_POSITIVE)'}
                       >
                         <option value="OPEN">● OPEN</option>
                         <option value="RESOLVED">✓ RESOLVED</option>

@@ -11,7 +11,7 @@ from app.schemas.events import (
     EventSearchResponse,
     NormalizedEventResponse,
 )
-from app.security.dependencies import get_current_user
+from app.security.dependencies import get_current_user, require_role
 from app.services.event_service import (
     get_event_by_id,
     ingest_batch_events,
@@ -26,7 +26,7 @@ router = APIRouter(prefix="/events", tags=["Security Events"])
     "",
     response_model=NormalizedEventResponse,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_current_user)],
+    dependencies=[Depends(require_role("Admin", "Analyst", "Developer"))],
 )
 async def ingest_event(
     payload: Dict[str, Any],
@@ -44,7 +44,7 @@ async def ingest_event(
     "/batch",
     response_model=List[NormalizedEventResponse],
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_current_user)],
+    dependencies=[Depends(require_role("Admin", "Analyst", "Developer"))],
 )
 async def ingest_batch(
     payload: BatchEventIngestRequest,
@@ -94,7 +94,7 @@ async def list_security_events(
     "/simulate",
     response_model=List[NormalizedEventResponse],
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_current_user)],
+    dependencies=[Depends(require_role("Admin", "Analyst", "Developer"))],
 )
 async def generate_simulated_events(
     db: AsyncSession = Depends(get_db),

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { Radio, Search, Plus, CheckCircle, RefreshCw } from 'lucide-react';
 
 export const EventsPage: React.FC = () => {
+  const { user } = useAuth();
+  const isViewer = user?.role === 'Viewer';
   const [events, setEvents] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [actorFilter, setActorFilter] = useState('');
@@ -100,15 +103,17 @@ export const EventsPage: React.FC = () => {
         <div className="flex items-center space-x-3">
           <button
             onClick={handleSimulate}
-            disabled={simulating}
-            className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-colors disabled:opacity-50"
-            title="Generate controlled demonstration events tagged as simulated"
+            disabled={simulating || isViewer}
+            className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title={isViewer ? 'Viewer role is read-only. Cannot generate events.' : 'Generate controlled demonstration events tagged as simulated'}
           >
-            <span>{simulating ? 'Generating...' : 'Generate Demo Events'}</span>
+            <span>{simulating ? 'Generating...' : isViewer ? 'Simulation (Admin/Analyst only)' : 'Generate Demo Events'}</span>
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 shadow-sm"
+            disabled={isViewer}
+            title={isViewer ? 'Viewer role is read-only. Cannot ingest events.' : 'Ingest raw event'}
+            className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Ingest Raw Event</span>

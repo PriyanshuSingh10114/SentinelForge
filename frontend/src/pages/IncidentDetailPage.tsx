@@ -22,6 +22,7 @@ export const IncidentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const isAdmin = user?.role === 'Admin';
+  const isAnalystOrAdmin = user?.role === 'Admin' || user?.role === 'Analyst';
 
   const [incident, setIncident] = useState<any | null>(null);
   const [attackGraph, setAttackGraph] = useState<any | null>(null);
@@ -155,7 +156,9 @@ export const IncidentDetailPage: React.FC = () => {
             <select
               value={incident.status}
               onChange={(e) => handleStatusChange(e.target.value)}
-              className="bg-sentinel-900 border border-sentinel-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-mono focus:outline-none focus:border-cyan-500"
+              disabled={!isAnalystOrAdmin}
+              title={!isAnalystOrAdmin ? 'Analyst or Admin role required to update incident status' : 'Update status'}
+              className="bg-sentinel-900 border border-sentinel-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-mono focus:outline-none focus:border-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="OPEN">STATUS: OPEN</option>
               <option value="INVESTIGATING">STATUS: INVESTIGATING</option>
@@ -166,11 +169,18 @@ export const IncidentDetailPage: React.FC = () => {
 
             <button
               onClick={handleRunInvestigation}
-              disabled={investigating}
-              className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium rounded-lg text-xs transition-all flex items-center space-x-1.5 shadow-lg shadow-cyan-950/50 disabled:opacity-50"
+              disabled={investigating || !isAnalystOrAdmin}
+              title={!isAnalystOrAdmin ? 'Analyst or Admin role required to run AI investigations' : 'Run AI Investigation'}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium rounded-lg text-xs transition-all flex items-center space-x-1.5 shadow-lg shadow-cyan-950/50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>{investigating ? 'Investigating...' : 'Run AI Investigation'}</span>
+              <span>
+                {investigating
+                  ? 'Investigating...'
+                  : !isAnalystOrAdmin
+                  ? 'AI Triage (Analyst/Admin only)'
+                  : 'Run AI Investigation'}
+              </span>
             </button>
           </div>
         </div>
@@ -386,10 +396,15 @@ export const IncidentDetailPage: React.FC = () => {
               </p>
               <button
                 onClick={handleRunInvestigation}
-                disabled={investigating}
-                className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white rounded-lg text-xs font-medium"
+                disabled={investigating || !isAnalystOrAdmin}
+                title={!isAnalystOrAdmin ? 'Analyst or Admin role required to execute AI investigations' : 'Start AI Investigation'}
+                className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white rounded-lg text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {investigating ? 'Running LangGraph Agent...' : 'Start AI Investigation'}
+                {!isAnalystOrAdmin
+                  ? 'AI Investigation (Analyst/Admin only)'
+                  : investigating
+                  ? 'Running LangGraph Agent...'
+                  : 'Start AI Investigation'}
               </button>
             </div>
           ) : (
